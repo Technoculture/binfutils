@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: fasta4analysis
+Version: 1.0.0
+Summary: Package for fasta matplotlib Data Analysis
+Home-page: https://github.com/GitCodeSM
+Author: Swati Mishra
+Author-email: mishraswati1387@gmail.com
+License: MIT
+Keywords: fasta matplotlib python package
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3.10.4
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+License-File: LICENCE
+
+DNA Sequences Data Analysis tool using fasta, txt, and csv files data to create histogram, barh and pie chart plots
+

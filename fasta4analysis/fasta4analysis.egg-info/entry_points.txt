@@ -1,0 +1,3 @@
+[console_scripts]
+fastacli = fasta4analysis.fastacli:main
+
