@@ -1,6 +1,5 @@
-from Bio import SeqIO
 from Bio.Seq import Seq
-import csv
+import click
 
 
 def melting_temp(dna_seq):
@@ -9,6 +8,7 @@ def melting_temp(dna_seq):
     nC = dna_seq.count("C")
     nG = dna_seq.count("G")
     nT = dna_seq.count("T")
+
     Tm = (nA + nT) * 2 + (nG + nC) * 4
     return round(Tm, 2)
 
@@ -38,36 +38,26 @@ def get_padlock_arms(miRNA):
     return arm_a, arm_b
 
 
-def design_padlock_probe(common_csv_filename):
+@click.command()
+@click.option('--reporter-seq', default='ACGT', help='Reporter sequence')
+def design_padlock_probe(reporter_seq):
+    target_file = 'final_filtered_common.csv'
+    with open(target_file, 'r') as file:
+        target_sequences = file.read().splitlines()
+
     padlock_probes = []
+    for target_seq in target_sequences:
+        miRNA = Seq(target_seq.upper())
+        arm1, arm2 = get_padlock_arms(miRNA)
+        res = str(arm2) + reporter_seq + str(arm1)
+        padlock_probes.append({'miRNA': target_seq, 'Arm1': str(arm1), 'Arm2': str(arm2)})
 
-    with open(common_csv_filename, 'r') as csvfile:
-        reader = csv.reader(csvfile)
-        next(reader)  # Skip header row
-        for row in reader:
-            miRNA_seq = row[0]
-            miRNA = Seq(miRNA_seq)
-            arm1, arm2 = get_padlock_arms(miRNA)
-            padlock_probe = {
-                'miRNA': miRNA_seq,
-                'Arm1': str(arm1),
-                'Arm2': str(arm2)
-            }
-            padlock_probes.append(padlock_probe)
-
-    return padlock_probes
+    for probe in padlock_probes:
+        click.echo(f"miRNA: {probe['miRNA']}")
+        click.echo(f"Arm 1: {probe['Arm1']}")
+        click.echo(f"Arm 2: {probe['Arm2']}")
+        click.echo("------------")
 
 
 if __name__ == '__main__':
-    common_csv_filename = 'final_filtered_common.csv'
-    padlock_probes = design_padlock_probe(common_csv_filename)
-
-    for probe in padlock_probes:
-        print(f"miRNA: {probe['miRNA']}")
-        print(f"Arm 1: {probe['Arm1']}")
-        print(f"Arm 2: {probe['Arm2']}")
-        print("------------")
-
-
-
-
+    design_padlock_probe()
