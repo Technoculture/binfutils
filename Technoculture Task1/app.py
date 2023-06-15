@@ -59,7 +59,7 @@ def design_padlock_probe(common_csv_filename):
 
 
 if __name__ == '__main__':
-    common_csv_filename = 'common.csv'
+    common_csv_filename = 'final_filtered_common.csv'
     padlock_probes = design_padlock_probe(common_csv_filename)
 
     for probe in padlock_probes:
@@ -67,6 +67,7 @@ if __name__ == '__main__':
         print(f"Arm 1: {probe['Arm1']}")
         print(f"Arm 2: {probe['Arm2']}")
         print("------------")
+
 
 
 
