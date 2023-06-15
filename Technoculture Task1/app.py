@@ -1,5 +1,6 @@
 from Bio.Seq import Seq
 import click
+import csv
 
 
 def melting_temp(dna_seq):
@@ -42,15 +43,19 @@ def get_padlock_arms(miRNA):
 @click.option('--reporter-seq', default='ACGT', help='Reporter sequence')
 def design_padlock_probe(reporter_seq):
     target_file = 'final_filtered_common.csv'
+    target_sequences = []
+
     with open(target_file, 'r') as file:
-        target_sequences = file.read().splitlines()
+        reader = csv.DictReader(file)
+        for row in reader:
+            target_sequences.append(row['Sequence'])
 
     padlock_probes = []
     for target_seq in target_sequences:
         miRNA = Seq(target_seq.upper())
         arm1, arm2 = get_padlock_arms(miRNA)
         res = str(arm2) + reporter_seq + str(arm1)
-        padlock_probes.append({'miRNA': target_seq, 'Arm1': str(arm1), 'Arm2': str(arm2)})
+        padlock_probes.append({'miRNA': target_seq, 'Arm1': arm1.reverse_complement(), 'Arm2': str(arm2)})
 
     for probe in padlock_probes:
         click.echo(f"miRNA: {probe['miRNA']}")
