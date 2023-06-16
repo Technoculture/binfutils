@@ -21,7 +21,7 @@ pip install -r requirements.txt
 # Usage
 1. Run the following command to execute the Padlock Probe Designer CLI:
 ```
-python app.py --input-file final_filtered_common.csv 
+python Padlock_Probe_Designer.py --input-file final_filtered_common.csv 
 ```
 2. The CLI will utilize the provided final_filtered_common.csv file as input and generate Padlock Probes.
 
@@ -34,7 +34,7 @@ python app.py --input-file final_filtered_common.csv
 
 2. Execute the following steps to prepare the input data:
 
-    a. Run the Python script data_downloader.py to download the required files and convert them into CSV format using Biopython and Pandas:
+    a. Run the Python script to download the required files and convert them into CSV format using Biopython and Pandas:
     ```
     python main.py
     python convert.py
