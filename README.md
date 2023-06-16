@@ -4,10 +4,10 @@ The Padlock Probe Designer CLI is a command-line tool developed in Python using 
 
 # Installation
 1. Clone the repository to your local machine:
-git clone https://github.com/palak178/Technoculture_Task1.git 
+''' git clone https://github.com/palak178/Technoculture_Task1.git 
 
 2. Navigate to the project directory:
-cd Technoculture_Task1
+''' cd Technoculture_Task1
 
 3. Install the required dependencies using pip:
-pip install -r requirements.txt
+''' pip install -r requirements.txt
