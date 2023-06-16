@@ -41,27 +41,36 @@ def get_padlock_arms(miRNA):
 
 @click.command()
 @click.option('--reporter-seq', default='ACGT', help='Reporter sequence')
-def design_padlock_probe(reporter_seq):
+@click.option('--output-file', default='padlock_probes.csv', help='Output CSV file')
+def design_padlock_probe(reporter_seq, output_file):
     target_file = 'final_filtered_common.csv'
     target_sequences = []
+    target_data = []
 
     with open(target_file, 'r') as file:
         reader = csv.DictReader(file)
-        for row in reader:
-            target_sequences.append(row['Sequence'])
+        target_data = list(reader)
+        target_sequences = [row['Sequence'] for row in target_data]
 
     padlock_probes = []
-    for target_seq in target_sequences:
+    for i, target_seq in enumerate(target_sequences):
         miRNA = Seq(target_seq.upper())
         arm1, arm2 = get_padlock_arms(miRNA)
         res = str(arm2) + reporter_seq + str(arm1)
-        padlock_probes.append({'miRNA': target_seq, 'Arm1': arm1.reverse_complement(), 'Arm2': str(arm2)})
+        padlock_probe = target_data[i].copy()
+        padlock_probe['Padlock_Probe'] = res
+        padlock_probe['Arm1'] = str(arm1)
+        padlock_probe['Arm2'] = str(arm2)
+        padlock_probes.append(padlock_probe)
 
-    for probe in padlock_probes:
-        click.echo(f"miRNA: {probe['miRNA']}")
-        click.echo(f"Arm 1: {probe['Arm1']}")
-        click.echo(f"Arm 2: {probe['Arm2']}")
-        click.echo("------------")
+    fieldnames = list(target_data[0].keys())
+    fieldnames.insert(fieldnames.index('Sequence') + 1, 'Padlock_Probe')
+    fieldnames.insert(fieldnames.index('Padlock_Probe') + 1, 'Arm1')
+    fieldnames.insert(fieldnames.index('Arm1') + 1, 'Arm2')
+    with open(output_file, 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(padlock_probes)
 
 
 if __name__ == '__main__':
