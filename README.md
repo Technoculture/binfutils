@@ -21,7 +21,7 @@ pip install -r requirements.txt
 # Usage
 1. Run the following command to execute the Padlock Probe Designer CLI:
 ```
-python Padlock_Probe_Designer.py --input-file final_filtered_common.csv 
+python Padlock_Probe_Designer.py 
 ```
 2. The CLI will utilize the provided final_filtered_common.csv file as input and generate Padlock Probes.
 
