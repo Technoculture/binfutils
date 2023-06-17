@@ -1,23 +1,49 @@
 from Bio.Seq import Seq
 import click
 import csv
+import random
 
-
-def melting_temp(dna_seq):
+def short_formula(dna_seq):
+    """
+    Melting temperature calculation for sequence strictly shorter than 14 nucleotides
+    """
     dna_seq = dna_seq.upper()
     nA = dna_seq.count("A")
     nC = dna_seq.count("C")
     nG = dna_seq.count("G")
     nU = dna_seq.count("U")
+    nT = dna_seq.count("T")
 
-    Tm = (nA + nU) * 2 + (nG + nC) * 4
+    Tm = (nA + nU + nT) * 2 + (nG + nC) * 4
     return round(Tm, 2)
+
+
+def long_formula(dna_seq):
+    """
+    Melting temperature calculation for sequence strictly longer than 13 nucleotides
+    """
+    dna_seq = dna_seq.upper()
+    nA = dna_seq.count("A")
+    nC = dna_seq.count("C")
+    nG = dna_seq.count("G")
+    nT = dna_seq.count("T")
+    nU = dna_seq.count("U")
+
+    Tm = 64.9 + 41 * (nG + nC - 16.4) / (nA + nU + nT + nG + nC)
+    return round(Tm, 2)
+
+
+def melting_temp(dna_seq):
+    if len(dna_seq) < 14:
+        return short_formula(dna_seq)
+    else:
+        return long_formula(dna_seq)
 
 
 def annealing_temp(aseq, bseq):
     a_temp = melting_temp(aseq)
     b_temp = melting_temp(bseq)
-    return 0.3 * a_temp + 0.7 * b_temp - 14.9
+    return max(0.3 * a_temp + 0.7 * b_temp - 14.9, 0)
 
 
 def index_with_lowest_at(cdna):
@@ -39,10 +65,17 @@ def get_padlock_arms(miRNA):
     return arm_a, arm_b
 
 
+def get_reporter_sequence():
+    reporter_sequences = [
+        "TTCCTTTTACGACCTCAATGCTGCTGCTGTACTACTCTT",
+        "TTCCTTTTACGATCGCGCTTGGTATAATCGCTACTTCTT"
+    ]
+    return random.choice(reporter_sequences)
+
+
 @click.command()
-@click.option('--reporter-seq', default='ACGT', help='Reporter sequence')
 @click.option('--output-file', default='padlock_probes.csv', help='Output CSV file')
-def design_padlock_probe(reporter_seq, output_file):
+def design_padlock_probe(output_file):
     target_file = 'final_filtered_common.csv'
     target_sequences = []
     target_data = []
@@ -56,22 +89,30 @@ def design_padlock_probe(reporter_seq, output_file):
     for i, target_seq in enumerate(target_sequences):
         miRNA = Seq(target_seq.upper())
         arm1, arm2 = get_padlock_arms(miRNA)
-        res = str(arm2) + reporter_seq + str(arm1)
+        reporter_seq = get_reporter_sequence()
+        res = str(arm2) + reporter_seq.lower() + str(arm1)
         padlock_probe = target_data[i].copy()
         padlock_probe['Padlock_Probe'] = res
-        padlock_probe['Arm1'] = str(arm1)
-        padlock_probe['Arm2'] = str(arm2)
+        padlock_probe['Arm1'] = arm1
+        padlock_probe['Arm2'] = arm2
+        padlock_probe['Arm1_Melting_Temp'] = melting_temp(str(arm1))
+        padlock_probe['Arm2_Melting_Temp'] = melting_temp(str(arm2))
+        padlock_probe['Arm1_Annealing_Temp'] = annealing_temp(str(arm1), reporter_seq)
+        padlock_probe['Arm2_Annealing_Temp'] = annealing_temp(str(arm2), reporter_seq)
         padlock_probe['Melting_Temp'] = melting_temp(target_seq)
-        padlock_probe['Annealing_Temp'] = annealing_temp(arm1, arm2)
+        padlock_probe['Annealing_Temp'] = annealing_temp(target_seq, reporter_seq)
         padlock_probes.append(padlock_probe)
 
     fieldnames = list(target_data[0].keys())
-    sequence_index = fieldnames.index('Sequence')
-    fieldnames.insert(sequence_index + 1, 'Melting_Temp')
-    fieldnames.insert(sequence_index + 2, 'Annealing_Temp')
-    fieldnames.insert(sequence_index + 3, 'Padlock_Probe')
-    fieldnames.insert(sequence_index + 4, 'Arm1')
-    fieldnames.insert(sequence_index + 5, 'Arm2')
+    fieldnames.insert(fieldnames.index('Sequence') + 1, 'Melting_Temp')
+    fieldnames.insert(fieldnames.index('Melting_Temp') + 1, 'Annealing_Temp')
+    fieldnames.insert(fieldnames.index('Annealing_Temp') + 1, 'Arm1')
+    fieldnames.insert(fieldnames.index('Arm1') + 1, 'Arm1_Melting_Temp')
+    fieldnames.insert(fieldnames.index('Arm1_Melting_Temp') + 1, 'Arm1_Annealing_Temp')
+    fieldnames.insert(fieldnames.index('Arm1_Annealing_Temp') + 1, 'Arm2')
+    fieldnames.insert(fieldnames.index('Arm2') + 1, 'Arm2_Melting_Temp')
+    fieldnames.insert(fieldnames.index('Arm2_Melting_Temp') + 1, 'Arm2_Annealing_Temp')
+    fieldnames.insert(fieldnames.index('Arm2_Annealing_Temp') + 1, 'Padlock_Probe')
 
     with open(output_file, 'w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
