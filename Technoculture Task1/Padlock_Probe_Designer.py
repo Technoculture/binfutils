@@ -8,9 +8,9 @@ def melting_temp(dna_seq):
     nA = dna_seq.count("A")
     nC = dna_seq.count("C")
     nG = dna_seq.count("G")
-    nT = dna_seq.count("T")
+    nU = dna_seq.count("U")
 
-    Tm = (nA + nT) * 2 + (nG + nC) * 4
+    Tm = (nA + nU) * 2 + (nG + nC) * 4
     return round(Tm, 2)
 
 
