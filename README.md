@@ -19,41 +19,42 @@ pip install -r requirements.txt
 ```
 
 # Usage
-1. Run the following command to execute the Padlock Probe Designer CLI:
+1. Run the following commands to execute the Padlock Probe Designer CLI:
 ```
-python Padlock_Probe_Designer.py 
+python input_data_preparation.py
+``` 
 ```
-2. The CLI will utilize the provided final_filtered_common.csv file as input and generate Padlock Probes.
+python Padlock_Probe_Designer.py --output-file <padlock_probes.csv>
+```
+2. The CLI will utilize the provided filtered_data.csv file as input and generate Padlock Probes.
 
 # Input Data Preparation
-1. Ensure you have the following files available in the project directory: 
+   Before designing padlock probes, the input data needs to be prepared using the input_data_preparation.py script, which performs the following tasks:
 
-     a. mature.fa from miRBase: This file contains mature microRNA sequences.
-     
-     b. mirna.tsv from salivaDB: This file contains miRNA data related to salivary biomarkers.
+   1. Retrieves the mature.fa file from miRBase and mirna.tsv file from salivaDB.
+  
+   2. Converts the downloaded data to CSV format.
+  
+   3. Analyze and filters the miRNA data based on Disease Categories.
+   
+   4. Refines the data and generates the 'filtered_data.csv' file as input for the Padlock Probe Designer CLI.
 
-2. Execute the following steps to prepare the input data:
+ To prepare the input data, run the following command:
+ ```
+  python input_data_preparation.py
+ ```
+This will download the required files and generate a filtered_data.csv file, which serves as the input file for the padlock probe designer.
 
-    a. Run the Python script to download the required files and convert them into CSV format using Biopython and Pandas:
-    ```
-    python main.py
-    python convert.py
-    ```
-   This script retrieves the mature.fa file from miRBase and mirna.tsv file from salivaDB, converting both files into mature.csv and mirna.csv, respectively.
+# Padlock Probe Design
+The Padlock_Probe_Designer.py script designs padlock probes based on the data in the filtered_data.csv file. It calculates melting temperatures, annealing temperatures, and generates padlock probe sequences for each target miRNA.
 
-    b. Run the script filter.py to analyze and filter the mature.csv and mirna.csv files, extracting the common data into a new CSV file named common.csv:
-    ```
-    python filter.py
-    python compare.py
-    ``` 
-    This step compares the sequences in mature.csv and mirna.csv, identifying the common data and saving it as common.csv.
+To design padlock probes, run the following command:
+```
+python Padlock_Probe_Designer.py --output-file <padlock_probes.csv>
+```
+Replace <output_filename.csv> with the desired name for the output file that will contain the designed padlock probes.
 
-    c. Finally, filter the common.csv file using Pandas to obtain the final filtered data, and save it as final_filtered_common.csv:
-    ```
-    python filter_common.py
-    ```
-    This step applies additional filters to the common.csv file, refining the data and generating the final_filtered_common.csv file as input for the Padlock
-    Probe Designer CLI.
+The script will generate the output file containing the designed padlock probes, along with relevant information such as melting temperatures, annealing temperatures, and arm sequences.
 
 # Contributing
 Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
