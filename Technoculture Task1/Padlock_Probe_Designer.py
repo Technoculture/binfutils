@@ -61,12 +61,18 @@ def design_padlock_probe(reporter_seq, output_file):
         padlock_probe['Padlock_Probe'] = res
         padlock_probe['Arm1'] = str(arm1)
         padlock_probe['Arm2'] = str(arm2)
+        padlock_probe['Melting_Temp'] = melting_temp(target_seq)
+        padlock_probe['Annealing_Temp'] = annealing_temp(arm1, arm2)
         padlock_probes.append(padlock_probe)
 
     fieldnames = list(target_data[0].keys())
-    fieldnames.insert(fieldnames.index('Sequence') + 1, 'Padlock_Probe')
-    fieldnames.insert(fieldnames.index('Padlock_Probe') + 1, 'Arm1')
-    fieldnames.insert(fieldnames.index('Arm1') + 1, 'Arm2')
+    sequence_index = fieldnames.index('Sequence')
+    fieldnames.insert(sequence_index + 1, 'Melting_Temp')
+    fieldnames.insert(sequence_index + 2, 'Annealing_Temp')
+    fieldnames.insert(sequence_index + 3, 'Padlock_Probe')
+    fieldnames.insert(sequence_index + 4, 'Arm1')
+    fieldnames.insert(sequence_index + 5, 'Arm2')
+
     with open(output_file, 'w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
@@ -75,3 +81,5 @@ def design_padlock_probe(reporter_seq, output_file):
 
 if __name__ == '__main__':
     design_padlock_probe()
+
+
