@@ -4,7 +4,7 @@ import pandas as pd
 df = pd.read_csv('common.csv')
 
 # Apply the first filter to select desired columns
-filtered_df = df[['Name', 'Sequence', 'Biomarker_Name', 'Sampling_Method', 'Collection_site', 'Disease_name', 'Regulation', 'Exosomal/Non-exosomal']]
+filtered_df = df[['Name', 'Biomarker_Name', 'Sequence', 'Sampling_Method', 'Collection_site', 'Disease_name', 'Regulation', 'Exosomal/Non-exosomal']]
 
 # Apply the second filter to keep rows with the same 'Name' and 'Biomarker_Name'
 filtered_df = filtered_df[filtered_df['Name'] == filtered_df['Biomarker_Name']]
