@@ -59,7 +59,7 @@ def index_with_lowest_at(cdna):
 
 def get_padlock_arms(miRNA):
     dna = miRNA.back_transcribe().reverse_complement()
-    split = index_with_lowest_at(dna) + 2
+    split = index_with_lowest_at(dna) + 3
     arm_a = dna[:split]
     arm_b = dna[split:]
     return arm_a, arm_b
@@ -122,5 +122,4 @@ def design_padlock_probe(output_file):
 
 if __name__ == '__main__':
     design_padlock_probe()
-
 
