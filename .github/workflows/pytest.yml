@@ -1,4 +1,4 @@
-name: Pytest
+name: Run Python Tests
 
 on:
   push:
@@ -9,20 +9,20 @@ on:
       - master
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.11'  # Replace 'x' with your desired Python version
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-    - name: Install dependencies
-      run: pip install -r Padlock_Probe_miRNA/requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-    - name: Run tests
-      run: pytest Padlock_Probe_miRNA/test_padlock_probe_designer.py
+      - name: Run tests
+        run: pytest
