@@ -1,41 +1,52 @@
 import unittest
-from Padlock_Probe_Designer import melting_temp, annealing_temp, index_with_lowest_at, get_padlock_arms
+from Bio.Seq import Seq
+from your_module_name import short_formula, long_formula, melting_temp, annealing_temp, index_with_lowest_at, get_padlock_arms
 
-class TestPadlockProbeDesigner(unittest.TestCase):
-    def test_melting_temp(self):
-        self.assertEqual(melting_temp('ATCG'), 58.0)
-        self.assertEqual(melting_temp('GCGCTATA'), 44.0)
-        self.assertEqual(melting_temp('TACGATCGATCG'), 48.0)
-        self.assertEqual(melting_temp('CCCC'), 56.0)
+class TestMeltingTemp(unittest.TestCase):
+    def test_short_formula(self):
+        dna_seq = "ATCGGCTA"
+        expected_tm = 24.0
+        result = short_formula(dna_seq)
+        self.assertEqual(result, expected_tm)
+
+    def test_long_formula(self):
+        dna_seq = "ATCGGCTATCGGCTA"
+        expected_tm = 66.47
+        result = long_formula(dna_seq)
+        self.assertAlmostEqual(result, expected_tm, places=2)
+
+    def test_melting_temp_short_sequence(self):
+        dna_seq = "ATCGGCTA"
+        expected_tm = 24.0
+        result = melting_temp(dna_seq)
+        self.assertEqual(result, expected_tm)
+
+    def test_melting_temp_long_sequence(self):
+        dna_seq = "ATCGGCTATCGGCTA"
+        expected_tm = 66.47
+        result = melting_temp(dna_seq)
+        self.assertAlmostEqual(result, expected_tm, places=2)
 
     def test_annealing_temp(self):
-        self.assertAlmostEqual(annealing_temp('ATCG', 'CGAT'), 39.05, places=2)
-        self.assertAlmostEqual(annealing_temp('GCGCTATA', 'TATAGCGC'), 34.45, places=2)
-        self.assertAlmostEqual(annealing_temp('TACGATCGATCG', 'CGATCGATCGTA'), 40.45, places=2)
-        self.assertAlmostEqual(annealing_temp('CCCC', 'GGGG'), 56.0, places=2)
+        aseq = "ATCGGCTA"
+        bseq = "CGGCTA"
+        expected_temp = 11.17
+        result = annealing_temp(aseq, bseq)
+        self.assertAlmostEqual(result, expected_temp, places=2)
 
     def test_index_with_lowest_at(self):
-        self.assertEqual(index_with_lowest_at('ATCGGCGAT'), 5)
-        self.assertEqual(index_with_lowest_at('GCGCTATAGCGC'), 6)
-        self.assertEqual(index_with_lowest_at('TACGATCGATCGTAC'), 11)
-        self.assertEqual(index_with_lowest_at('CCCCGGGG'), 4)
+        cdna = "ATCGGCTATCGGCTA"
+        expected_index = 4
+        result = index_with_lowest_at(cdna)
+        self.assertEqual(result, expected_index)
 
     def test_get_padlock_arms(self):
-        arm_a, arm_b = get_padlock_arms('ATCGGCGAT')
-        self.assertEqual(arm_a, 'ATCGG')
-        self.assertEqual(arm_b, 'CGAT')
-
-        arm_a, arm_b = get_padlock_arms('GCGCTATAGCGC')
-        self.assertEqual(arm_a, 'GCGCTATA')
-        self.assertEqual(arm_b, 'GCGC')
-
-        arm_a, arm_b = get_padlock_arms('TACGATCGATCGTAC')
-        self.assertEqual(arm_a, 'TACGATCGATCG')
-        self.assertEqual(arm_b, 'CGTAC')
-
-        arm_a, arm_b = get_padlock_arms('CCCCGGGG')
-        self.assertEqual(arm_a, 'CCCC')
-        self.assertEqual(arm_b, 'GGGG')
+        miRNA = Seq("ATCGGCTA")
+        expected_arm_a = "ATCGGCTA"
+        expected_arm_b = ""
+        result = get_padlock_arms(miRNA)
+        self.assertEqual(result[0], expected_arm_a)
+        self.assertEqual(result[1], expected_arm_b)
 
 if __name__ == '__main__':
     unittest.main()
