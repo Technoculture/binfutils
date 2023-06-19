@@ -76,7 +76,7 @@ def get_reporter_sequence():
 @click.command()
 @click.option('--output-file', default='padlock_probes.csv', help='Output CSV file')
 def design_padlock_probe(output_file):
-    target_file = 'final_filtered_common.csv'
+    target_file = 'filtered_data.csv'
     target_sequences = []
     target_data = []
 
