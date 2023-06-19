@@ -25,4 +25,4 @@ jobs:
       run: pip install -r Padlock_Probe_miRNA/requirements.txt
 
     - name: Run tests
-      run: pytest Padlock_Probe_miRNA/tests
+      run: pytest Padlock_Probe_miRNA/test_padlock_probe_designer.py
