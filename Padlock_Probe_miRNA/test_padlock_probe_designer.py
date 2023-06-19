@@ -1,6 +1,6 @@
 import unittest
 from Bio.Seq import Seq
-from your_module_name import short_formula, long_formula, melting_temp, annealing_temp, index_with_lowest_at, get_padlock_arms
+from pytest.yml import short_formula, long_formula, melting_temp, annealing_temp, index_with_lowest_at, get_padlock_arms
 
 class TestMeltingTemp(unittest.TestCase):
     def test_short_formula(self):
