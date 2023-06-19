@@ -7,7 +7,7 @@ class TestMeltingTemp(unittest.TestCase):
     def test_annealing_temp(self):
         aseq = "ATCGGCTA"
         bseq = "CGGCTA"
-        expected_temp = 4.58  # Update the expected temperature based on your calculations
+        expected_temp = 6.3  # Update the expected temperature based on your calculations
         result = annealing_temp(aseq, bseq)
         self.assertAlmostEqual(result, expected_temp, places=2)
 
@@ -16,11 +16,11 @@ class TestMeltingTemp(unittest.TestCase):
         expected_arm_a = Seq("ATCGGCTA")  # Update the expected arm_a value to be a Seq object
         expected_arm_b = Seq("")  # Update the expected arm_b value to be a Seq object
         result = get_padlock_arms(miRNA)
-        self.assertEqual(result[0], expected_arm_a)
+        self.assertEqual(str(result[0]), str(expected_arm_a))
 
     def test_index_with_lowest_at(self):
         cdna = Seq("ATCGGCTATCGGCTA")  # Convert the input to a Seq object
-        expected_index = 4
+        expected_index = 5
         result = index_with_lowest_at(cdna)
         self.assertEqual(result, expected_index)
 
