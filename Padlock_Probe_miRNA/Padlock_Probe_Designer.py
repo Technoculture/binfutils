@@ -1,11 +1,13 @@
-from Bio.Seq import Seq
 import click
 import csv
 import random
+from Bio import SeqIO
+from Bio.Seq import Seq
+
 
 def short_formula(dna_seq):
     """
-    Melting temperature calculation for sequence strictly shorter than 14 nucleotides
+    Melting temperature calculation for a sequence strictly shorter than 14 nucleotides
     """
     dna_seq = dna_seq.upper()
     nA = dna_seq.count("A")
@@ -20,7 +22,7 @@ def short_formula(dna_seq):
 
 def long_formula(dna_seq):
     """
-    Melting temperature calculation for sequence strictly longer than 13 nucleotides
+    Melting temperature calculation for a sequence strictly longer than 13 nucleotides
     """
     dna_seq = dna_seq.upper()
     nA = dna_seq.count("A")
@@ -75,15 +77,25 @@ def get_reporter_sequence():
 
 @click.command()
 @click.option('--output-file', default='padlock_probes.csv', help='Output CSV file')
-def design_padlock_probe(output_file):
-    target_file = 'filtered_data.csv'
+@click.argument('input-file', type=click.Path(exists=True))
+def design_padlock_probe(output_file, input_file):
     target_sequences = []
     target_data = []
 
-    with open(target_file, 'r') as file:
-        reader = csv.DictReader(file)
-        target_data = list(reader)
-        target_sequences = [row['Sequence'] for row in target_data]
+    if input_file.endswith('.csv'):
+        with open(input_file, 'r') as file:
+            reader = csv.DictReader(file)
+            target_data = list(reader)
+            target_sequences = [row['Sequence'] for row in target_data]
+    elif input_file.endswith('.fa'):
+        with open(input_file, 'r') as file:
+            sequences = SeqIO.parse(file, 'fasta')
+            for sequence in sequences:
+                target_sequences.append(str(sequence.seq))
+                target_data.append({'Sequence': str(sequence.seq)})
+    else:
+        click.echo('Unsupported file format. Only CSV and FASTA files are supported.')
+        return
 
     padlock_probes = []
     for i, target_seq in enumerate(target_sequences):
@@ -122,4 +134,3 @@ def design_padlock_probe(output_file):
 
 if __name__ == '__main__':
     design_padlock_probe()
-
