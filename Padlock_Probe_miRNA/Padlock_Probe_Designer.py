@@ -76,9 +76,10 @@ def get_reporter_sequence():
 
 
 @click.command()
-@click.option('--output-file', default='padlock_probes.csv', help='Output CSV file')
 @click.argument('input-file', type=click.Path(exists=True))
-def design_padlock_probe(output_file, input_file):
+@click.option('--output-file', default='padlock_probes.csv', help='Output CSV file')
+
+def design_padlock_probe(input_file, output_file):
     target_sequences = []
     target_data = []
 
@@ -90,6 +91,18 @@ def design_padlock_probe(output_file, input_file):
     elif input_file.endswith('.fa'):
         with open(input_file, 'r') as file:
             sequences = SeqIO.parse(file, 'fasta')
+            for sequence in sequences:
+                target_sequences.append(str(sequence.seq))
+                target_data.append({'Sequence': str(sequence.seq)})
+    elif input_file.endswith('.fasta'):
+        with open(input_file, 'r') as file:
+            sequences = SeqIO.parse(file, 'fasta')
+            for sequence in sequences:
+                target_sequences.append(str(sequence.seq))
+                target_data.append({'Sequence': str(sequence.seq)})
+    elif input_file.endswith('.txt'):
+        with open(input_file, 'r') as file:
+            sequences = SeqIO.parse(file, 'text')
             for sequence in sequences:
                 target_sequences.append(str(sequence.seq))
                 target_data.append({'Sequence': str(sequence.seq)})
